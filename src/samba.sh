@@ -48,25 +48,25 @@ case "$x" in
 
 
     1)
+      echo ""
       echo "Install / Update all SAMBA packages..."
       echo ""
       sudo apt install libcups2 samba samba-common cups -y
       echo ""
-      echo "SUCCESS!"
-      sleep 2
 echo ""
 echo "=============================================================================================="
 echo ""
 echo "=============================================================================================="
 ;;
     2)
+      echo ""
       echo "Enter the USER you want to add to SAMBA: "
       read sambauser
       echo ""
       sudo smbpasswd -a $sambauser
       echo ""
       echo "SUCCESS!"
-      sleep 2
+      sleep 1
 echo ""
 echo "=============================================================================================="
 echo ""
@@ -75,6 +75,7 @@ echo "==========================================================================
     3)
       bkpdate=$(date +-'%F'-'%s')
       sudo cp /etc/samba/smb.conf /etc/samba/smb.conf$bkpdate.bkp 
+      echo ""
       echo "Enter the SAMBA server NAME: "
       read nameserver
       echo ""
@@ -107,7 +108,7 @@ echo "==========================================================================
       " >> /etc/samba/smb.conf
       echo ""
       echo "SUCCESS!"
-      sleep 2
+      sleep 1
 echo ""
 echo "=============================================================================================="
 echo ""
@@ -147,7 +148,7 @@ echo "==========================================================================
       echo ""
       echo "SUCCESS!"
       echo ""
-      sleep 2
+      sleep 1
 echo ""
 echo 
 "=============================================================================================="
@@ -155,23 +156,20 @@ echo ""
 echo "=============================================================================================="
 ;;
     9)
+      echo ""
       echo "Returning..."
       echo ""
-      echo "SUCCESS!"
-      echo ""
-      sleep 2
-      ./server.sh
+      src/server.sh
+      exit
 echo ""
 echo "=============================================================================================="
 echo ""
 echo "=============================================================================================="
 ;;
     0)
+      echo ""
       echo "Exiting..."
       echo ""
-      echo "SUCCESS!"
-      echo ""
-      sleep 2
       clear
       exit
 echo ""

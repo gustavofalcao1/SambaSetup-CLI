@@ -39,37 +39,39 @@ case "$x" in
 
 
     1)
+      echo ""
       echo "Server Users"
       echo ""
       less /etc/passwd
       echo ""
-      echo "SUCCESS!"
-      sleep 2
 echo ""
 echo "=============================================================================================="
 echo ""
 echo "=============================================================================================="
 ;;
     2)
+      echo ""
       echo "Enter the new user NAME for create: "
       read useradd
       echo ""
-      echo "want to create a HOME directory?"
+      echo "want to create a HOME directory? "
       echo "[yes] or [no]: "
       read homedir
       echo ""
       if [ $homedir == 'yes' ]; 
         then sudo adduser $useradd
+      fi
       sudo adduser --no-create-home $useradd
       echo ""
       echo "SUCCESS!"
-      sleep 2
+      sleep 1
 echo ""
 echo "=============================================================================================="
 echo ""
 echo "=============================================================================================="
 ;;
     3)
+      echo ""
       echo "Enter the user NAME for delete: "
       read userdel
       echo ""
@@ -79,9 +81,10 @@ echo "==========================================================================
       echo ""
       if [ $sure == 'yes' ]; 
         then sudo userdel -r $userdel
+      fi
       echo ""
       echo "SUCCESS!!!"
-      sleep 2
+      sleep 1
 echo ""
 echo 
 "=============================================================================================="
@@ -89,23 +92,20 @@ echo ""
 echo "=============================================================================================="
 ;;
     9)
+      echo ""
       echo "Returning..."
       echo ""
-      echo "SUCCESS!"
-      echo ""
-      sleep 2
-      ./server.sh
+      src/server.sh
+      exit
 echo ""
 echo "=============================================================================================="
 echo ""
 echo "=============================================================================================="
 ;;
     0)
+      echo ""
       echo "Exiting..."
       echo ""
-      echo "SUCCESS!"
-      echo ""
-      sleep 2
       clear
       exit
 echo ""
