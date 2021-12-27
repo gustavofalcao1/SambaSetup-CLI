@@ -1,13 +1,13 @@
-# Script para Samba
-Script para instalar / configurar o Samba de forma facil.
+# Server Setup
+## Script for Server
+This script is ideal for initial, quick setup and repetitive tasks on Linux Servers
 
-Este script foi testado em debian 10 e ubuntu 20.04.
+This script has been tested on Debian 10 and Ubuntu 20.04
 
-## Utilização
-Conceda permições para o arquivo
-
-    sudo chmod +x sambaconfig.sh
+## Use
+Grant permissions to the file
+    sudo chmod -R +x server-setup/
     
-Execute o script
-
-    ./sambacanfig.sh
+Run the script
+    cd server-setup/
+    ./setup.sh
