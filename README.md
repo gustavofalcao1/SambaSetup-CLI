@@ -1,17 +1,45 @@
 # Server Setup
-## Script for Server
-This script is ideal for initial, quick setup and repetitive tasks on Linux Servers
+* Shell Script
+* Git
 
-This script has been tested on Debian 10 and Ubuntu 20.04
+## Platform Tested
+- [x] Debian 10
+- [x] Ubuntu 24.04
+- [ ] Debian 12
+- [ ] ArchLinux
+- [ ] Fedora
+- [ ] OpenSUSE
+- [ ] Slackware
+- [ ] Raspberry Pi OS
+- [ ] Alpine Linux
 
-## Use
-Download setup
-> git clone https://github.com/gustavofalcao1/server-setup.git
+## Features
+- [x] Linux System Config
+- [x] Linux Samba AD DC Server
+- [ ] Linux File Server
+- [ ] Linux Mail Server
+- [ ] Linux Web Server
+- [ ] Port Code to Python
+- [ ] Update CLI UI
+- [ ] Batter Commends
+- [ ] Batter Modulations
+- [ ] Add Multiple OS Logic
 
-Grant permissions to the file
-> sudo chmod -R +x server-setup/
+## Exec
+### Download
+```
+  git clone https://github.com/gustavofalcao1/server-setup.git
+```
+### Permissions
+```
+  sudo chmod -R +x server-setup/
+```
+### Run
+```
+  ./setup.sh
+```
 
-Run the script
-> cd server-setup/
-> 
-> ./setup.sh
+<!-- ## Screenshots
+<p align="center">
+  <img src="screenshots/00.png" alt="BTS") width="300"/>
+</p> -->
