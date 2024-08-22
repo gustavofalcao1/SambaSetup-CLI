@@ -2,13 +2,19 @@
 
 x="start"
 
+LOGFILE="./logs/samba.log"
+
+log_message() {
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" >> $LOGFILE
+}
+
 menu ()
 {
 while true $x != "start"
 do
 clear
 echo "=============================================================================================="
-echo "                                   USERS"
+echo "                                   SAMBA"
 echo "=============================================================================================="
 echo ""
 echo "------------------------------------------"
@@ -37,87 +43,78 @@ echo "==========================================================================
 
 case "$x" in
 
-
-    1)
-      echo ""
-      echo "Server Users"
-      echo ""
-      less /etc/passwd
-      echo ""
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  1)
+    echo ""
+    echo "Server Users"
+    echo ""
+    sudo samba-tool user list
+    echo ""
+    echo "SUCCESS!"
+    log_message "Server Users Listed"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    2)
-      echo ""
-      echo "Enter the new user NAME for create: "
-      read useradd
-      echo ""
-      echo "want to create a HOME directory? "
-      echo "[yes] or [no]: "
-      read homedir
-      echo ""
-      if [ $homedir == 'yes' ]; 
-        then sudo adduser $useradd
-      fi
-      sudo adduser --no-create-home $useradd
-      echo ""
-      echo "SUCCESS!"
-      sleep 1
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  2)
+    echo ""
+    echo "Enter the new user NAME to create: "
+    read useradd
+    echo ""
+    echo "Enter the user PASSWORD: "
+    read -s password
+    echo ""
+    echo "Creating user '$useradd'..."
+    sudo samba-tool user create "$useradd" "$password"
+    echo ""
+    echo "SUCCESS!"
+    log_message "Server Users Created"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    3)
-      echo ""
-      echo "Enter the user NAME for delete: "
-      read userdel
-      echo ""
-      echo "The user {$userdel} and all their data will be DELETED. Are you sure? "
-      echo "[yes] or [no]: "
-      read sure
-      echo ""
-      if [ $sure == 'yes' ]; 
-        then sudo userdel -r $userdel
-      fi
+  3)
+    echo ""
+    echo "Enter the user NAME to delete: "
+    read userdel
+    echo ""
+    echo "The user '$userdel' and all their data will be DELETED. Are you sure? "
+    echo "[yes] or [no]: "
+    read sure
+    echo ""
+    if [ "$sure" == 'yes' ]; then 
+      sudo samba-tool user delete "$userdel"
       echo ""
       echo "SUCCESS!!!"
-      sleep 1
-echo ""
-echo 
-"=============================================================================================="
-echo ""
-echo "=============================================================================================="
+    else
+      echo "Operation canceled."
+    fi
+    log_message "Server Users Deleted"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    9)
-      echo ""
-      echo "Returning..."
-      echo ""
-      src/server.sh
-      exit
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  9)
+    echo ""
+    echo "Returning..."
+    echo ""
+    src/server.sh
+    exit
+    echo ""
+    sleep 1
 ;;
-    0)
-      echo ""
-      echo "Exiting..."
-      echo ""
-      clear
-      exit
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  0)
+    echo ""
+    echo "Exiting..."
+    echo ""
+    clear
+    exit
+    echo ""
+    sleep 1
 ;;
-
-*)
-        echo "Invalid option!"
+  *)
+    echo "Invalid option!"
 esac
 done
-
 }
+
 menu

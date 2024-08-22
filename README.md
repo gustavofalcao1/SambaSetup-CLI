@@ -1,6 +1,5 @@
-# Server Setup
+# SambaSetup - CLI
 * Shell Script
-* Git
 
 ## Platform Tested
 - [x] Debian 10
@@ -15,10 +14,9 @@
 
 ## Features
 - [x] Linux System Config
-- [x] Linux Samba AD DC Server
-- [ ] Linux File Server
-- [ ] Linux Mail Server
-- [ ] Linux Web Server
+- [x] Samba AD DC Server
+- [x] Kerberos Config
+- [x] AD DC Roaming Profile
 - [ ] Port Code to Python
 - [ ] Update CLI UI
 - [ ] Batter Commends
@@ -28,11 +26,11 @@
 ## Exec
 ### Download
 ```
-  git clone https://github.com/gustavofalcao1/server-setup.git
+  git clone https://github.com/gustavofalcao1/SambaSetup-CLI.git
 ```
 ### Permissions
 ```
-  sudo chmod -R +x server-setup/
+  sudo chmod -R +x SambaSetup-CLI/
 ```
 ### Run
 ```

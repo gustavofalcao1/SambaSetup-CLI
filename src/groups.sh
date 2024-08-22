@@ -2,13 +2,19 @@
 
 x="start"
 
+LOGFILE="./logs/samba.log"
+
+log_message() {
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" >> $LOGFILE
+}
+
 menu ()
 {
 while true $x != "start"
 do
 clear
 echo "=============================================================================================="
-echo "                                   GROUPS"
+echo "                                   SAMBA"
 echo "=============================================================================================="
 echo ""
 echo "------------------------------------------"
@@ -40,98 +46,90 @@ echo "==========================================================================
 
 case "$x" in
 
-
-    1)
-      echo ""
-      echo "Server Groups"
-      echo ""
-      less /etc/group
-      echo ""
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  1)
+    echo ""
+    echo "Server Groups"
+    echo ""
+    sudo samba-tool group list
+    echo ""
+    echo "SUCCESS!"
+    log_message "Server Group Listed"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    2)
-      echo ""
-      echo "Enter the Group NAME for create: "
-      read groupadd
-      echo ""
-      sudo groupadd $groupadd
-      echo ""
-      echo "SUCCESS!"
-      sleep 1
-echo ""
-echo 
-"=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  2)
+    echo ""
+    echo "Enter the Group NAME to create: "
+    read groupadd
+    echo ""
+    sudo samba-tool group add "$groupadd"
+    echo ""
+    echo "SUCCESS!"
+    log_message "Server Group Created"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    3)
-      echo ""
-      echo "Enter the group NAME for delete: "
-      read groupdel
-      echo ""
-      echo "The group {$groupdel} and all their data will be DELETED. Are you sure? "
-      echo "[yes] or [no]: "
-      read sure
-      echo ""
-      if [ $sure == 'yes' ]; 
-        then sudo groupdel $groupdel
-      fi
+  3)
+    echo ""
+    echo "Enter the Group NAME to delete: "
+    read groupdel
+    echo ""
+    echo "The group '$groupdel' and all its data will be DELETED. Are you sure? "
+    echo "[yes] or [no]: "
+    read sure
+    echo ""
+    if [ "$sure" == 'yes' ]; then 
+      sudo samba-tool group delete "$groupdel"
       echo ""
       echo "SUCCESS!!!"
-      sleep 1
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+    else
+      echo "Operation canceled."
+    fi
+    log_message "Server Group Deleted"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    4)
-      echo ""
-      echo "Enter the group NAME: "
-      read group
-      echo ""
-      echo "Enter the user NAME for ADD to $group: "
-      read user
-      echo ""
-      sudo addgroup $user $group
-      echo ""
-      echo "SUCCESS!!!"
-      sleep 1
-echo ""
-echo 
-"=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  4)
+    echo ""
+    echo "Enter the Group NAME: "
+    read group
+    echo ""
+    echo "Enter the User NAME to ADD to $group: "
+    read user
+    echo ""
+    sudo samba-tool group addmembers "$group" "$user"
+    echo ""
+    echo "SUCCESS!!!"
+    log_message "Server User added to Group"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
-    9)
-      echo ""
-      echo "Returning..."
-      echo ""
-      src/server.sh
-      exit
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  9)
+    echo ""
+    echo "Returning..."
+    echo ""
+    src/server.sh
+    exit
+    echo ""
+    sleep 1
 ;;
-    0)
-      echo ""
-      echo "Exiting..."
-      echo ""
-      clear
-      exit
-echo ""
-echo "=============================================================================================="
-echo ""
-echo "=============================================================================================="
+  0)
+    echo ""
+    echo "Exiting..."
+    echo ""
+    clear
+    exit
+    echo ""
+    sleep 1
 ;;
-
-*)
-        echo "Invalid option!"
+  *)
+    echo "Invalid option!"
 esac
 done
-
 }
+
 menu

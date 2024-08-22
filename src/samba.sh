@@ -21,22 +21,19 @@ echo "------------------------------------------"
 echo "    Install SAMBA Services      - 1"
 echo "------------------------------------------"
 echo "------------------------------------------"
-echo "    Add User to SAMBA           - 2"
+echo "    Configure SAMBA-AD-DC       - 2"
 echo "------------------------------------------"
 echo "------------------------------------------"
-echo "    Configure SAMBA-AD-DC       - 3"
+echo "    Configure Kerberos          - 3"
 echo "------------------------------------------"
 echo "------------------------------------------"
-echo "    Configure Kerberos          - 4"
+echo "    Status SAMBA Server         - 4"
 echo "------------------------------------------"
 echo "------------------------------------------"
-echo "    List SAMBA Users            - 5"
+echo "    Restart SAMBA Server        - 5"
 echo "------------------------------------------"
 echo "------------------------------------------"
-echo "    Status SAMBA Server         - 6"
-echo "------------------------------------------"
-echo "------------------------------------------"
-echo "    Restart SAMBA Server        - 7"
+echo "    AD DC Roaming Profile       - 6"
 echo "------------------------------------------"
 echo "------------------------------------------"
 echo "    Return                      - 9"
@@ -68,18 +65,6 @@ case "$x" in
     read p
 ;;
   2)
-    echo ""
-    echo "Enter the USER you want to add to SAMBA: "
-    read sambauser
-    echo ""
-    sudo smbpasswd -a $sambauser
-    echo ""
-    log_message "Added user $sambauser to Samba"
-    echo ""
-    echo "Press <ENTER> for continue..."
-    read p
-;;
-  3)
     echo ""
     echo "Configuring Samba AD DC..."
     bkpdate=$(date +-'%F'-'%s')
@@ -118,33 +103,33 @@ case "$x" in
       echo "Generating SAMBA TLS certificates..."
       sudo bash -c "echo '
       [ req ]
-      default_bits       = 2048
-      distinguished_name = req_distinguished_name
-      x509_extensions    = v3_ca
-      req_extensions     = v3_req
+        default_bits       = 2048
+        distinguished_name = req_distinguished_name
+        x509_extensions    = v3_ca
+        req_extensions     = v3_req
 
       [ req_distinguished_name ]
-      countryName            = Country Name (2 letter code)
-      countryName_default    = US
-      stateOrProvinceName    = State or Province Name (full name)
-      stateOrProvinceName_default = State
-      localityName           = Locality Name (e.g., city)
-      localityName_default   = City
-      organizationalUnitName = Organizational Unit Name (e.g., section)
-      organizationalUnitName_default = IT
-      commonName             = Common Name (e.g., server FQDN or YOUR name)
-      commonName_default     = $fqdn
-      commonName_max         = 64
+        countryName            = Country Name (2 letter code)
+        countryName_default    = US
+        stateOrProvinceName    = State or Province Name (full name)
+        stateOrProvinceName_default = State
+        localityName           = Locality Name (e.g., city)
+        localityName_default   = City
+        organizationalUnitName = Organizational Unit Name (e.g., section)
+        organizationalUnitName_default = IT
+        commonName             = Common Name (e.g., server FQDN or YOUR name)
+        commonName_default     = $fqdn
+        commonName_max         = 64
 
       [ v3_ca ]
-      subjectKeyIdentifier   = hash
-      authorityKeyIdentifier = keyid:always,issuer:always
-      basicConstraints       = CA:TRUE
-      keyUsage                = keyCertSign, cRLSign
+        subjectKeyIdentifier   = hash
+        authorityKeyIdentifier = keyid:always,issuer:always
+        basicConstraints       = CA:TRUE
+        keyUsage                = keyCertSign, cRLSign
 
       [ v3_req ]
-      basicConstraints       = CA:FALSE
-      keyUsage                = digitalSignature, keyEncipherment
+        basicConstraints       = CA:FALSE
+        keyUsage                = digitalSignature, keyEncipherment
       ' > /tmp/openssl.cnf"
 
       sudo openssl genrsa -out /etc/samba/tls/private_key.pem 2048
@@ -206,7 +191,7 @@ case "$x" in
     echo "Press <ENTER> to continue..."
     read p
 ;;
-  4)
+  3)
     bkpdate=$(date +-'%F'-'%s')
     sudo cp /etc/krb5.conf /etc/krb5.conf$bkpdate.bkp
     
@@ -217,9 +202,9 @@ case "$x" in
     echo ""
     sudo bash -c "echo '
     [libdefaults]
-    default_realm = $realm
-    dns_lookup_realm = false
-    dns_lookup_kdc = true
+      default_realm = $realm
+      dns_lookup_realm = false
+      dns_lookup_kdc = true
 
     [realms]
       $realm = {
@@ -239,29 +224,7 @@ case "$x" in
     echo "Press <ENTER> to continue..."
     read p
 ;;
-  5)
-    echo ""
-    echo "Enter [C]omplete or [S]imple Info [Default: (S)]: "
-    read option
-    echo ""
-
-    if [[ "$option" == "C" || "$option" == "c" ]]; then
-      echo "Listing complete user info..."
-      sudo pdbedit -L -v
-    else
-      echo "Listing simple user info..."
-      sudo samba-tool user list 
-    fi
-
-    echo ""
-    echo "SUCCESS!"
-    echo ""
-    log_message "Listed Samba users"
-    echo ""
-    echo "Press <ENTER> to continue..."
-    read p
-;;
-  6)
+  4)
     echo ""
     sudo /etc/init.d/samba-ad-dc status
     echo ""
@@ -272,7 +235,7 @@ case "$x" in
     echo "Press <ENTER> for continue..."
     read p
 ;;
-  7)
+  5)
     echo ""
     sudo /etc/init.d/smbd restart
     sudo systemctl restart smbd nmbd winbind samba-ad-dc
@@ -282,6 +245,35 @@ case "$x" in
     log_message "Restarted Samba server"
     echo ""
     sleep 1
+;;
+  6)
+    echo ""
+    echo "Setting up Roaming Profiles..."
+
+    sudo mkdir -p /srv/samba/profiles
+    sudo chmod 0770 /srv/samba/profiles
+    sudo chown root:"Domain Users" /srv/samba/profiles
+
+    sudo bash -c "echo '
+    [profiles]
+      path = /srv/samba/profiles
+      read only = no
+      browseable = no
+      force create mode = 0600
+      force directory mode = 0700
+      csc policy = disable
+      vfs objects = acl_xattr
+    ' >> /etc/samba/smb.conf"
+
+    sudo systemctl restart smbd nmbd winbind samba-ad-dc
+
+    echo ""
+    echo "SUCCESS!"
+    echo ""
+    log_message "Roaming Profiles configuration has been applied"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
 ;;
   9)
     echo ""
