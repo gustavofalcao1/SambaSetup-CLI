@@ -78,10 +78,10 @@ case "$x" in
     read userdel
     echo ""
     echo "The user '$userdel' and all their data will be DELETED. Are you sure? "
-    echo "[yes] or [no]: "
+    echo "[y]es or [n]o: "
     read sure
     echo ""
-    if [ "$sure" == 'yes' ]; then 
+    if [ "$sure" == 'y' ]; then 
       sudo samba-tool user delete "$userdel"
       echo ""
       echo "SUCCESS!!!"
