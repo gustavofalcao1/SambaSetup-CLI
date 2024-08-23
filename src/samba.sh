@@ -157,6 +157,7 @@ case "$x" in
       tls enabled = yes
       tls keyfile = /etc/samba/tls/private_key.pem
       tls certfile = /etc/samba/tls/certificate.crt
+      dns forwarder = 8.8.8.8
 
     [netlogon]
       path = /var/lib/samba/sysvol/$realm/scripts
@@ -252,7 +253,7 @@ case "$x" in
 
     sudo mkdir -p /srv/samba/profiles
     sudo chmod 0770 /srv/samba/profiles
-    sudo chown root:"Domain Users" /srv/samba/profiles
+    sudo chown root:users /srv/samba/profiles
 
     sudo bash -c "echo '
     [profiles]
