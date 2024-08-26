@@ -57,14 +57,29 @@ case "$x" in
 ;;
   2)
     echo ""
-    echo "Enter the new user NAME to create: "
-    read useradd
+    echo "Create a new SAMBA User: "
     echo ""
-    echo "Enter the user PASSWORD: "
+    echo "Enter NAME (ex.: João): "
+    read name
+    echo ""
+    echo "Enter SURNAME (ex.: Pedro): "
+    read surname
+    echo ""
+    echo "Enter USERNAME(ex.: joaopedro): "
+    read username
+    echo ""
+    echo "Enter the user PASSWORD (ex.: pssworduser): "
     read -s password
     echo ""
-    echo "Creating user '$useradd'..."
-    sudo samba-tool user create "$useradd" "$password"
+    echo "Creating user '$username'..."
+    domain=$(grep -i 'realm' /etc/samba/smb.conf | awk -F= '{print $2}' | tr -d '[:space:]' | awk -F. '{print $1}' | tr '[:upper:]' '[:lower:]')
+    sudo samba-tool user add "$username" "$password" \
+    --given-name="$name" \
+    --surname="$surname" \
+    --home-directory="/srv/samba/home/$username" \
+    --profile-path="\\$domain\profiles\%USERNAME%" \
+    --must-change-at-next-login
+    sudo samba-tool user enable "$username"
     echo ""
     echo "SUCCESS!"
     log_message "Server Users Created"
@@ -74,7 +89,7 @@ case "$x" in
 ;;
   3)
     echo ""
-    echo "Enter the user NAME to delete: "
+    echo "Enter the USERNAME to delete: "
     read userdel
     echo ""
     echo "The user '$userdel' and all their data will be DELETED. Are you sure? "

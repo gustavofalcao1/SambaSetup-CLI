@@ -97,7 +97,7 @@ case "$x" in
     echo "Enter the Group NAME: "
     read group
     echo ""
-    echo "Enter the User NAME to ADD to $group: "
+    echo "Enter the UUSERNAME to ADD to $group: "
     read user
     echo ""
     sudo samba-tool group addmembers "$group" "$user"
