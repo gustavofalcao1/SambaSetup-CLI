@@ -116,7 +116,7 @@ case "$x" in
     echo "Enter the USERNAME to list Groups: "
     read username
     echo ""
-    sudo samba-tool user listgroups $username
+    sudo samba-tool user getgroups $username
     log_message "Server Users Groups listed"
     echo ""
     echo "Press <ENTER> for continue..."
