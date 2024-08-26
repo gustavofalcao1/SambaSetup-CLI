@@ -27,6 +27,9 @@ echo "------------------------------------------"
 echo "    Delete Server User          - 3"
 echo "------------------------------------------"
 echo "------------------------------------------"
+echo "    List User Groups            - 4"
+echo "------------------------------------------"
+echo "------------------------------------------"
 echo "    Return                      - 9"
 echo "------------------------------------------"
 echo "------------------------------------------"
@@ -104,6 +107,17 @@ case "$x" in
       echo "Operation canceled."
     fi
     log_message "Server Users Deleted"
+    echo ""
+    echo "Press <ENTER> for continue..."
+    read p
+;;
+  4)
+    echo ""
+    echo "Enter the USERNAME to list Groups: "
+    read username
+    echo ""
+    sudo samba-tool user listgroups $username
+    log_message "Server Users Groups listed"
     echo ""
     echo "Press <ENTER> for continue..."
     read p
