@@ -4,27 +4,62 @@ A command-line tool for configuring and managing Samba Active Directory Domain C
 
 ## Features
 
-- Simplified Samba AD DC configuration
-- User and group management
-- Share management
-- Monitoring and logs
-- Backup and restoration
-- User-friendly command-line interface
-- Green-themed visual interface with progress indicators
+- Simplified Samba AD DC configuration and management
+- User-friendly command-line interface with green theme
+- Progress indicators and visual feedback
+- Comprehensive logging system
 - English language support
 
-## Requirements
+### Core Features
+- Domain Controller setup and configuration
+- User and group management with quota support
+- Share management with advanced permissions
+- Backup and restore functionality with retention policies
+- Service monitoring and status tracking
+- DNS and Kerberos configuration
 
-- Ubuntu Server 22.04 or higher
+### Technical Features
+- Modular architecture for easy maintenance
+- Comprehensive error handling and logging
+- Progress bars for long operations
+- Color-coded status messages
+- Configuration backup and restore
+- Service health monitoring
+
+### Security Features
+- Secure password policies
+- Permission management
+- Backup encryption support
+- Audit logging
+- SSL/TLS support for secure connections
+
+## Compatibility
+
+### Tested Operating Systems
+- Ubuntu Server 22.04 LTS
+- Ubuntu Server 22.10
+- Ubuntu Server 24.04 LTS (Development)
+
+### Requirements
+
 - Samba 4.19.x or higher
 - Root/sudo privileges
-- Required packages: samba, winbind, krb5-config
+- Required packages:
+  - samba
+  - winbind
+  - krb5-config
+
+### Default Settings
+- Domain: DOMAIN.LOCAL
+- Workgroup: DOMAIN
+- NetBIOS name: SV-DOMAIN
+- DNS forwarder: 1.1.1.1
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/SambaSetup-CLI.git
+git clone https://github.com/gustavofalcao1/SambaSetup-CLI.git
 cd SambaSetup-CLI
 ```
 
@@ -40,46 +75,57 @@ Run the main script as root:
 sudo ./sambasetup
 ```
 
+### Command Line Options
+```bash
+./sambasetup -h        # Show help message
+./sambasetup -v        # Show version information
+./sambasetup -s        # Show service status
+./sambasetup -l        # Show recent logs
+```
+
 ### Available Menus
 
 1. Domain Configuration
    - Initial DC setup
    - Environment cleanup and reset
    - DNS and Kerberos configuration
-   - Default domain: DOMAIN.LOCAL
-   - Default workgroup: DOMAIN
-   - Default NetBIOS name: SV-DOMAIN
-   - Default DNS forwarder: 1.1.1.1
+   - Domain join operations
+   - Forest level management
 
 2. User Management
    - Create/remove users
-   - Manage groups
-   - Set permissions
-   - User quota management
+   - Manage groups and permissions
+   - Set user quotas
+   - Password policies
+   - User templates
 
 3. Share Management
    - Create/remove shares
    - Configure permissions
-   - List shares
+   - Access control lists
+   - Share templates
    - Mount point management
 
 4. Monitoring and Logs
    - Service status with visual indicators
-   - Log viewing with color coding
+   - Real-time log viewing
    - Active connections monitoring
+   - Performance metrics
    - System statistics
 
 5. Backup and Restore
-   - Full backup with progress bar
-   - Backup restoration
-   - Backup management (30-day retention)
-   - Automated cleanup
+   - Full system backup
+   - Incremental backups
+   - Scheduled backups
+   - 30-day retention management
+   - Backup verification
 
 6. Advanced Settings
    - smb.conf editor
    - DNS configuration
-   - Kerberos configuration
+   - Kerberos settings
    - Service management
+   - Performance tuning
 
 ## Project Structure
 
@@ -117,7 +163,7 @@ System logs are stored in:
 ## Visual Interface
 
 The tool features a modern command-line interface with:
-- ASCII art logo
+- ASCII art logo for brand identity
 - Progress bars for long operations
 - Color-coded status messages
 - Green-themed menus and prompts
@@ -140,6 +186,22 @@ The tool features a modern command-line interface with:
 - Backup verification
 - Easy restoration process
 
+## Performance
+
+- Efficient resource usage
+- Fast operation execution
+- Minimal system impact
+- Optimized code structure
+- Cache management
+
+## Security
+
+- Secure password handling
+- Permission verification
+- Audit logging
+- SSL/TLS support
+- Backup encryption
+
 ## Contributing
 
 Feel free to contribute to the project through pull requests or by reporting issues.
@@ -150,10 +212,26 @@ This project is licensed under the MIT License.
 
 ## Recent Updates
 
-- Translated interface to English
-- Updated visual theme to green color scheme
-- Enhanced progress indicators
-- Updated default domain settings
-- Improved error handling and user feedback
-- Added comprehensive logging
-- Enhanced backup system with progress tracking
+- Version 2.1.4
+  - Complete English translation
+  - Updated visual theme to green color scheme
+  - Enhanced progress indicators
+  - Updated default domain settings
+  - Improved error handling
+  - Added comprehensive logging
+  - Enhanced backup system
+  - Added command-line interface
+  - Improved documentation
+
+## Support
+
+For issues, feature requests, or general questions:
+- Create an issue on GitHub
+- Contact the maintainer
+- Check the documentation
+
+## Author
+
+Gustavo Falcão
+- GitHub: [@gustavofalcao1](https://github.com/gustavofalcao1)
+- Repository: [SambaSetup-CLI](https://github.com/gustavofalcao1/SambaSetup-CLI)
