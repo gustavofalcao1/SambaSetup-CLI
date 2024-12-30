@@ -1,2 +1,41 @@
-logs/
+# Logs
+logs/*
+*.log
+
+# Backups
+backups/
+
+# Arquivos temporários
+*.tmp
+*.temp
+*~
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de configuração local
+src/config/local.conf
+
+# Arquivos de ambiente
+.env
+*.env
+
+# Arquivos de cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de IDE
+.idea/
 .vscode/
+*.swp
+*.swo
+
+# Arquivos de build
+*.o
+*.so
+*.dylib
+
+# Arquivos de teste
+test/

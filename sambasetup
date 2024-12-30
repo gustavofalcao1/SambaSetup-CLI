@@ -1,0 +1,320 @@
+#!/bin/bash
+# =============================================================================
+# SambaSetup-CLI - Main Script
+# =============================================================================
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Import libraries
+source "${SCRIPT_DIR}/src/config/settings.conf"
+source "${SCRIPT_DIR}/src/lib/utils.sh"
+
+# Show help message
+show_help() {
+    echo -e "${COLOR_PRIMARY}SambaSetup-CLI - ${VERSION_DESCRIPTION}${COLOR_RESET}"
+    echo -e "${COLOR_MUTED}Version ${VERSION} (${VERSION_NAME}) - ${VERSION_DATE}${COLOR_RESET}"
+    echo -e "${COLOR_PRIMARY}${HEADER_STYLE}${COLOR_RESET}\n"
+    echo -e "${COLOR_SECONDARY}Usage:${COLOR_RESET}"
+    echo -e "  ${COLOR_MUTED}./sambasetup${COLOR_RESET} [options]\n"
+    
+    echo -e "${COLOR_SECONDARY}Options:${COLOR_RESET}"
+    echo -e "  ${COLOR_PRIMARY}-h, --help${COLOR_RESET}     Show this help message"
+    echo -e "  ${COLOR_PRIMARY}-v, --version${COLOR_RESET}  Show version information"
+    echo -e "  ${COLOR_PRIMARY}-s, --status${COLOR_RESET}   Show Samba service status"
+    echo -e "  ${COLOR_PRIMARY}-l, --logs${COLOR_RESET}     Show recent logs\n"
+    
+    echo -e "${COLOR_SECONDARY}Available Commands:${COLOR_RESET}"
+    echo -e "  ${COLOR_PRIMARY}1)${COLOR_RESET} Domain Configuration"
+    echo -e "     - Initial DC setup"
+    echo -e "     - Environment cleanup"
+    echo -e "     - DNS and Kerberos configuration"
+    
+    echo -e "  ${COLOR_PRIMARY}2)${COLOR_RESET} User Management"
+    echo -e "     - Create/remove users"
+    echo -e "     - Manage groups"
+    echo -e "     - Set permissions"
+    
+    echo -e "  ${COLOR_PRIMARY}3)${COLOR_RESET} Share Management"
+    echo -e "     - Create/remove shares"
+    echo -e "     - Configure permissions"
+    
+    echo -e "  ${COLOR_PRIMARY}4)${COLOR_RESET} Monitoring and Logs"
+    echo -e "     - Service status"
+    echo -e "     - View logs"
+    echo -e "     - Active connections"
+    
+    echo -e "  ${COLOR_PRIMARY}5)${COLOR_RESET} Backup and Restore"
+    echo -e "     - Create/restore backups"
+    echo -e "     - Manage backup files"
+    
+    echo -e "  ${COLOR_PRIMARY}6)${COLOR_RESET} Advanced Settings"
+    echo -e "     - Edit configurations"
+    echo -e "     - Service management\n"
+    
+    echo -e "${COLOR_SECONDARY}Examples:${COLOR_RESET}"
+    echo -e "  ${COLOR_MUTED}./sambasetup${COLOR_RESET}          Start interactive menu"
+    echo -e "  ${COLOR_MUTED}./sambasetup -s${COLOR_RESET}       Show service status"
+    echo -e "  ${COLOR_MUTED}./sambasetup --logs${COLOR_RESET}   Show recent logs\n"
+    
+    echo -e "${COLOR_SECONDARY}For more information, visit:${COLOR_RESET}"
+    echo -e "  ${REPOSITORY}\n"
+    
+    echo -e "${COLOR_SECONDARY}Author:${COLOR_RESET}"
+    echo -e "  ${AUTHOR}\n"
+}
+
+# Show version information
+show_version() {
+    echo -e "${COLOR_PRIMARY}SambaSetup-CLI v${VERSION} (${VERSION_NAME})${COLOR_RESET}"
+    echo -e "${COLOR_MUTED}${VERSION_DESCRIPTION}${COLOR_RESET}"
+    echo -e "${COLOR_MUTED}Released: ${VERSION_DATE}${COLOR_RESET}"
+    echo -e "${COLOR_MUTED}Author: ${AUTHOR}${COLOR_RESET}\n"
+}
+
+# Show recent logs
+show_logs() {
+    echo -e "${COLOR_PRIMARY}Recent Logs:${COLOR_RESET}"
+    echo -e "${COLOR_PRIMARY}${SUBMENU_STYLE}${COLOR_RESET}"
+    tail -n 20 "${MAIN_LOG}"
+}
+
+# Parse command line arguments
+parse_args() {
+    case "$1" in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -v|--version)
+            show_version
+            exit 0
+            ;;
+        -s|--status)
+            systemctl status samba-ad-dc
+            exit 0
+            ;;
+        -l|--logs)
+            show_logs
+            exit 0
+            ;;
+        "")
+            # No arguments, continue to main menu
+            ;;
+        *)
+            echo -e "${COLOR_ERROR}Error: Unknown option: $1${COLOR_RESET}"
+            echo -e "Use ${COLOR_PRIMARY}-h${COLOR_RESET} or ${COLOR_PRIMARY}--help${COLOR_RESET} to see available options"
+            exit 1
+            ;;
+    esac
+}
+
+# Show startup logo
+show_startup_logo() {
+    clear
+    echo -e "${COLOR_ACCENT}"
+    cat << "EOF"
+ ____                  _           ____       _                  ____ _     ___ 
+/ ___|  __ _ _ __ ___ | |__   __ _/ ___|  ___| |_ _   _ _ __   / ___| |   |_ _|
+\___ \ / _` | '_ ` _ \| '_ \ / _` \___ \ / _ \ __| | | | '_ \ | |   | |    | | 
+ ___) | (_| | | | | | | |_) | (_| |___) |  __/ |_| |_| | |_) || |___| |___ | | 
+|____/ \__,_|_| |_| |_|_.__/ \__,_|____/ \___|\__|\__,_| .__/  \____|_____|___|
+                                                        |_|                      
+EOF
+    echo -e "${COLOR_RESET}"
+    echo -e "${COLOR_HIGHLIGHT}Welcome to SambaSetup-CLI - ${VERSION_DESCRIPTION}${COLOR_RESET}"
+    echo -e "${COLOR_SECONDARY}Version ${VERSION} (${VERSION_NAME})${COLOR_RESET}\n"
+    echo -e "${COLOR_PRIMARY}Initializing...${COLOR_RESET}"
+    sleep 2
+}
+
+# Check privileges
+check_root
+
+# Main Menu
+main_menu() {
+    while true; do
+        show_menu "SambaSetup-CLI - Active Directory Management" \
+            "Domain Configuration" \
+            "User Management" \
+            "Share Management" \
+            "Monitoring and Logs" \
+            "Backup and Restore" \
+            "Advanced Settings"
+        
+        read -p "$(echo -e "${COLOR_SECONDARY}Select an option:${COLOR_RESET} ")" choice
+        
+        case $choice in
+            1) source "${SCRIPT_DIR}/src/samba.sh";;
+            2) source "${SCRIPT_DIR}/src/users.sh";;
+            3) source "${SCRIPT_DIR}/src/shares.sh";;
+            4) monitoring_menu;;
+            5) backup_menu;;
+            6) advanced_menu;;
+            0) 
+                echo -e "\n${COLOR_SUCCESS}Thank you for using SambaSetup-CLI!${COLOR_RESET}"
+                exit 0
+                ;;
+            *) log_message "WARN" "Invalid option";;
+        esac
+    done
+}
+
+# Monitoring Menu
+monitoring_menu() {
+    while true; do
+        show_menu "Monitoring and Logs" \
+            "Service Status" \
+            "System Logs" \
+            "Samba Logs" \
+            "Active Connections" \
+            "Statistics"
+        
+        read -p "$(echo -e "${COLOR_SECONDARY}Select an option:${COLOR_RESET} ")" choice
+        
+        case $choice in
+            1) 
+                echo -e "\n${COLOR_INFO}Service Status:${COLOR_RESET}"
+                systemctl status samba-ad-dc
+                read -p "Press ENTER to continue..."
+                ;;
+            2)
+                echo -e "\n${COLOR_INFO}System Logs (Press Ctrl+C to exit):${COLOR_RESET}"
+                tail -f "${MAIN_LOG}"
+                ;;
+            3)
+                echo -e "\n${COLOR_INFO}Samba Logs (Press Ctrl+C to exit):${COLOR_RESET}"
+                tail -f "${SAMBA_MAIN_LOG}"
+                ;;
+            4)
+                echo -e "\n${COLOR_INFO}Active Connections:${COLOR_RESET}"
+                smbstatus
+                read -p "Press ENTER to continue..."
+                ;;
+            5)
+                echo -e "\n${COLOR_INFO}Samba Statistics:${COLOR_RESET}"
+                samba-tool stats
+                read -p "Press ENTER to continue..."
+                ;;
+            0) break;;
+            *) log_message "WARN" "Invalid option";;
+        esac
+    done
+}
+
+# Backup Menu
+backup_menu() {
+    while true; do
+        show_menu "Backup and Restore" \
+            "Create Full Backup" \
+            "Restore Backup" \
+            "List Backups" \
+            "Clean Old Backups"
+        
+        read -p "$(echo -e "${COLOR_SECONDARY}Select an option:${COLOR_RESET} ")" choice
+        
+        case $choice in
+            1) create_backup "${SAMBA_LIB}";;
+            2) 
+                echo -e "\n${COLOR_INFO}Available backups:${COLOR_RESET}"
+                ls -l "${SCRIPT_DIR}/backups/"
+                echo ""
+                read -p "Enter backup name to restore: " backup_name
+                restore_backup "${SCRIPT_DIR}/backups/$backup_name" "${SAMBA_LIB}"
+                ;;
+            3)
+                echo -e "\n${COLOR_INFO}Available backups:${COLOR_RESET}"
+                ls -l "${SCRIPT_DIR}/backups/"
+                read -p "Press ENTER to continue..."
+                ;;
+            4)
+                if confirm_action "This will delete backups older than 30 days. Continue?"; then
+                    find "${SCRIPT_DIR}/backups/" -mtime +30 -delete
+                    log_message "INFO" "Old backups cleaned successfully"
+                fi
+                ;;
+            0) break;;
+            *) log_message "WARN" "Invalid option";;
+        esac
+    done
+}
+
+# Advanced Menu
+advanced_menu() {
+    while true; do
+        show_menu "Advanced Settings" \
+            "Edit smb.conf" \
+            "Configure DNS" \
+            "Configure Kerberos" \
+            "Service Management" \
+            "Check Configuration"
+        
+        read -p "$(echo -e "${COLOR_SECONDARY}Select an option:${COLOR_RESET} ")" choice
+        
+        case $choice in
+            1)
+                echo -e "\n${COLOR_INFO}Opening smb.conf in editor...${COLOR_RESET}"
+                ${EDITOR:-nano} "${SAMBA_CONF}"
+                ;;
+            2)
+                echo -e "\n${COLOR_INFO}Opening resolv.conf in editor...${COLOR_RESET}"
+                ${EDITOR:-nano} "/etc/resolv.conf"
+                ;;
+            3)
+                echo -e "\n${COLOR_INFO}Opening krb5.conf in editor...${COLOR_RESET}"
+                ${EDITOR:-nano} "/etc/krb5.conf"
+                ;;
+            4) service_menu;;
+            5)
+                echo -e "\n${COLOR_INFO}Checking Samba configuration:${COLOR_RESET}"
+                testparm -s
+                read -p "Press ENTER to continue..."
+                ;;
+            0) break;;
+            *) log_message "WARN" "Invalid option";;
+        esac
+    done
+}
+
+# Service Menu
+service_menu() {
+    while true; do
+        show_menu "Service Management" \
+            "Start Samba AD" \
+            "Stop Samba AD" \
+            "Restart Samba AD" \
+            "Service Status"
+        
+        read -p "$(echo -e "${COLOR_SECONDARY}Select an option:${COLOR_RESET} ")" choice
+        
+        case $choice in
+            1)
+                systemctl start samba-ad-dc
+                log_message "INFO" "Samba AD service started"
+                ;;
+            2)
+                systemctl stop samba-ad-dc
+                log_message "INFO" "Samba AD service stopped"
+                ;;
+            3)
+                systemctl restart samba-ad-dc
+                log_message "INFO" "Samba AD service restarted"
+                ;;
+            4)
+                echo -e "\n${COLOR_INFO}Service Status:${COLOR_RESET}"
+                systemctl status samba-ad-dc
+                read -p "Press ENTER to continue..."
+                ;;
+            0) break;;
+            *) log_message "WARN" "Invalid option";;
+        esac
+    done
+}
+
+# Start the program
+parse_args "$@"
+show_startup_logo
+log_message "INFO" "Starting SambaSetup-CLI"
+check_dependencies
+clear
+main_menu
